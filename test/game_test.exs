@@ -17,14 +17,14 @@ defmodule GameTest do
       game = Game.new() |> Map.put(:game_state, state)
 
       ## assert left-hand game is same as right-hand game
-      assert ^game = Game.make_move(game, "x")
+      assert { ^game, _ } = Game.make_move(game, "x")
     end
   end
 
   test "should handle first occurrence of guessed letter" do
     game = Game.new()
 
-    game = Game.make_move(game, "x")
+    { game, _ } = Game.make_move(game, "x")
     assert game.game_state != :already_used
     assert "x" in game.used
   end
@@ -32,16 +32,16 @@ defmodule GameTest do
   test "should handle subsequent occurrences of guessed letter" do
     game = Game.new()
 
-    game = Game.make_move(game, "x")
+    { game, _ } = Game.make_move(game, "x")
     assert game.game_state != :already_used
-    game = Game.make_move(game, "x")
+    { game, _ } = Game.make_move(game, "x")
     assert game.game_state == :already_used
   end
 
   test "should recognize good guess" do
     game = Game.new("wibble")
 
-    game = Game.make_move(game, "w")
+    { game, _ } = Game.make_move(game, "w")
     assert game.game_state == :good_guess
     assert game.turns_left == 7
   end
@@ -57,7 +57,7 @@ defmodule GameTest do
     ]
 
     Enum.reduce(moves, game, fn ({ guess, game_state } = _move, state) ->
-      next_state = Game.make_move(state, guess)
+      { next_state, _ } = Game.make_move(state, guess)
       assert game_state == next_state.game_state
       next_state
     end)
@@ -67,7 +67,7 @@ defmodule GameTest do
   test "should handle incorrect guess" do
     game = Game.new("wibble")
 
-    game = Game.make_move(game, "x")
+    { game, _ } = Game.make_move(game, "x")
     assert game.turns_left == 6
     assert game.game_state == :bad_guess
   end
@@ -85,7 +85,7 @@ defmodule GameTest do
     ]
 
     Enum.reduce(moves, game, fn ({ guess, game_state } = _move, state) ->
-      next_state = Game.make_move(state, guess)
+      { next_state, _ } = Game.make_move(state, guess)
       assert game_state == next_state.game_state
       next_state
     end)
